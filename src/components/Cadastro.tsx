@@ -13,8 +13,17 @@ const Cadastro = () => {
     const [email, setEmail] = useState<string>("");
     const [cpf, setCpf] = useState<string>("");
     const [password, setPassword] = useState<string>("");
+    const [nomeErro, setNomeErro] = useState<string>("");
+    const [emailErro, setEmailErro] = useState<string>("");
+    const [cpfErro, setCpfErro] = useState<string>("");
+    const [passwordErro, setPasswordErro] = useState<string>("");
 
     const cadastrarUsuario = (e: FormEvent) => {
+        setNomeErro("")
+        setEmailErro("")
+        setCpfErro("")
+        setPasswordErro("")
+
         e.preventDefault();
 
         const dados = {
@@ -24,7 +33,7 @@ const Cadastro = () => {
          password: password
           }
 
-        axios.post('http://10.137.9.131:8000/api/store',
+        axios.post('http://10.137.9.136:8000/api/store',
         dados,
         {
             headers: {
@@ -32,7 +41,22 @@ const Cadastro = () => {
                 "Content-Type": "application/json"
             }
         }).then(function(response){  
+            if(response.data.success == false){
+                if('nome' in response.data.error){
+                    setNomeErro(response.data.error.nome)
+                }
+                if('email' in response.data.error){
+                    setEmailErro(response.data.error.email)
+                }
+                if('cpf' in response.data.error){
+                    setCpfErro(response.data.error.cpf)
+                }
+                if('password' in response.data.error){
+                    setPasswordErro(response.data.error.password)
+                }
+            }else{
             window.location.href = "/listagem"
+        }
         }).catch(function (error){
             console.log(error);
         });
@@ -71,7 +95,8 @@ const Cadastro = () => {
                                     className='form-control'
                                     required
                                     onChange={handleState}
-                                    />              
+                                    />
+                                    <div className='text-tanger'>{nomeErro}</div>             
                                 </div>
                                 <div className='col-6'>
                                     <label htmlFor="email" className='form-label'>E-mail</label>  
@@ -81,6 +106,7 @@ const Cadastro = () => {
                                     required
                                     onChange={handleState}
                                      />   
+                                     <div className='text-tanger'>{emailErro}</div> 
                                 </div>
                                 <div className='col-6'>
                                     <label htmlFor="cpf" className='form-label'>CPF</label>  
@@ -89,7 +115,8 @@ const Cadastro = () => {
                                     className='form-control'
                                     required
                                     onChange={handleState}
-                                     />                         
+                                     /> 
+                                     <div className='text-tanger'>{cpfErro}</div>                         
                                 </div>
                                 <div className='col-6'>
                                     <label htmlFor="password" className='form-label'>Senha</label>  
@@ -99,6 +126,7 @@ const Cadastro = () => {
                                     required
                                     onChange={handleState}
                                      /> 
+                                     <div className='text-tanger'>{passwordErro}</div> 
                                 </div>
                                 <div className='col-12'>
                                     <button
